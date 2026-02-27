@@ -1,0 +1,15 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "npm install": true,
+        "/^cd \\.\\. ; cd server ; node index\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "Y": true,
+        "npm run build": true,
+        "/^git config --global user\\.name; git config --global user\\.email$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

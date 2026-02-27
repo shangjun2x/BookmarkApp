@@ -1,0 +1,5 @@
+node_modules/
+server/bookmarks.db
+client/build/
+.env
+*.log

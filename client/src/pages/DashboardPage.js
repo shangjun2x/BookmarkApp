@@ -1,0 +1,82 @@
+import React, { useState } from 'react';
+import { useApp } from '../contexts/AppContext';
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+import BookmarkList from '../components/BookmarkList';
+import BookmarkModal from '../components/BookmarkModal';
+import TagModal from '../components/TagModal';
+import GroupModal from '../components/GroupModal';
+import ImportExportModal from '../components/ImportExportModal';
+
+export default function DashboardPage() {
+  const { activeFilter } = useApp();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [bookmarkModal, setBookmarkModal] = useState({ open: false, bookmark: null });
+  const [tagModal, setTagModal] = useState({ open: false, tag: null });
+  const [groupModal, setGroupModal] = useState({ open: false, group: null });
+  const [importExportModal, setImportExportModal] = useState(false);
+  const [hoveredUrl, setHoveredUrl] = useState('');
+
+  const getTitle = () => {
+    if (activeFilter.type === 'all') return 'All Bookmarks';
+    if (activeFilter.type === 'group') return activeFilter.name || 'Group';
+    if (activeFilter.type === 'tag') return `Tag: ${activeFilter.name || ''}`;
+    return 'Bookmarks';
+  };
+
+  return (
+    <div className="app-layout">
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onAddGroup={() => setGroupModal({ open: true, group: null })}
+        onEditGroup={(group) => setGroupModal({ open: true, group })}
+        onAddTag={() => setTagModal({ open: true, tag: null })}
+        onImportExport={() => setImportExportModal(true)}
+      />
+
+      <div className="main-content">
+        <Header
+          title={getTitle()}
+          onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+          onAddBookmark={() => setBookmarkModal({ open: true, bookmark: null })}
+          hoveredUrl={hoveredUrl}
+        />
+
+        <div className="page-content">
+          <BookmarkList
+            onEdit={(bookmark) => setBookmarkModal({ open: true, bookmark })}
+            onAddBookmark={() => setBookmarkModal({ open: true, bookmark: null })}
+            onHoverUrl={setHoveredUrl}
+          />
+        </div>
+      </div>
+
+      {bookmarkModal.open && (
+        <BookmarkModal
+          bookmark={bookmarkModal.bookmark}
+          onClose={() => setBookmarkModal({ open: false, bookmark: null })}
+        />
+      )}
+
+      {tagModal.open && (
+        <TagModal
+          tag={tagModal.tag}
+          onClose={() => setTagModal({ open: false, tag: null })}
+        />
+      )}
+
+      {groupModal.open && (
+        <GroupModal
+          group={groupModal.group}
+          onClose={() => setGroupModal({ open: false, group: null })}
+        />
+      )}
+
+      {importExportModal && (
+        <ImportExportModal onClose={() => setImportExportModal(false)} />
+      )}
+    </div>
+  );
+}
