@@ -1,6 +1,6 @@
 # 🔖 Bookmark Manager
 
-A self-hosted bookmark management tool inspired by [Servas](https://github.com/beromir/Servas), built with **React** and **Node.js**.
+A self-hosted bookmark management tool, built with **React** and **Node.js**.
 
 ## Features
 
