@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import {
   Bookmark, FolderOpen, Tag, ChevronRight, ChevronDown, Plus,
-  LogOut, Download, Settings, Home, Globe, Lock, User
+  LogOut, Download, Settings, Home, Globe, Lock, User, Palette
 } from 'lucide-react';
 
 function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0 }) {
@@ -48,7 +48,7 @@ function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0
 }
 
 export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddTag, onImportExport }) {
-  const { user, logout, activeFilter, setActiveFilter, groupTree, tagList, totalBookmarks, isGuest, theme, toggleTheme } = useApp();
+  const { user, logout, activeFilter, setActiveFilter, groupTree, tagList, totalBookmarks, isGuest, theme, toggleTheme, defaultCardBg, setDefaultCardBg } = useApp();
 
   return (
     <aside className={`sidebar ${open ? 'open' : ''}`}>
@@ -154,6 +154,26 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
           <Download size={16} />
           <span>Import / Export</span>
         </button>
+        <div className="sidebar-item" style={{ cursor: 'default' }}>
+          <Palette size={16} />
+          <span style={{ flex: 1 }}>Card Color</span>
+          <input
+            type="color"
+            value={defaultCardBg || '#ffffff'}
+            onChange={(e) => setDefaultCardBg(e.target.value)}
+            style={{ width: 28, height: 22, padding: 0, border: 'none', borderRadius: 4, cursor: 'pointer', background: 'transparent' }}
+            title="Default card background color"
+          />
+          {defaultCardBg && (
+            <button
+              onClick={() => setDefaultCardBg('')}
+              style={{ padding: '0 4px', background: 'none', border: 'none', color: 'var(--text-sidebar-heading)', cursor: 'pointer', fontSize: '0.75rem' }}
+              title="Reset to default"
+            >
+              ✕
+            </button>
+          )}
+        </div>
         <button className="sidebar-item" onClick={toggleTheme}>
           <Settings size={16} />
           <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>

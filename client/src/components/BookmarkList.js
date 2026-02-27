@@ -31,12 +31,12 @@ function getContrastColor(hex) {
 }
 
 function BookmarkCard({ bookmark, onEdit, onHoverUrl }) {
-  const { fetchBookmarks, fetchTags, fetchGroups, user, activeFilter, groupFlat } = useApp();
+  const { fetchBookmarks, fetchTags, fetchGroups, user, activeFilter, groupFlat, defaultCardBg } = useApp();
   const isOwnBookmark = !bookmark.user_name || bookmark.user_id === user?.id;
   const isGuestBookmark = bookmark.user_name === 'Guest';
   const canEdit = isOwnBookmark || isGuestBookmark || bookmark.is_public === 1;
   const isPublicView = activeFilter.type === 'public';
-  const bgColor = bookmark.bg_color || null;
+  const bgColor = bookmark.bg_color || defaultCardBg || null;
   const fgColor = getContrastColor(bgColor);
   const effectiveGroupId = bookmark.user_group_id != null ? bookmark.user_group_id : bookmark.group_id;
   const groupName = effectiveGroupId ? groupFlat.find(g => g.id === effectiveGroupId)?.name : null;

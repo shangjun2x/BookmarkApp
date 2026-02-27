@@ -9,6 +9,7 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : null;
   });
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [defaultCardBg, setDefaultCardBg] = useState(() => localStorage.getItem('defaultCardBg') || '');
   const [bookmarkList, setBookmarkList] = useState([]);
   const [tagList, setTagList] = useState([]);
   const [groupTree, setGroupTree] = useState([]);
@@ -25,6 +26,15 @@ export function AppProvider({ children }) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Default card background
+  useEffect(() => {
+    if (defaultCardBg) {
+      localStorage.setItem('defaultCardBg', defaultCardBg);
+    } else {
+      localStorage.removeItem('defaultCardBg');
+    }
+  }, [defaultCardBg]);
 
   const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
 
@@ -146,6 +156,7 @@ export function AppProvider({ children }) {
     user, login, register, guestLogin, logout,
     isGuest: !!user?.isGuest,
     theme, toggleTheme,
+    defaultCardBg, setDefaultCardBg,
     bookmarkList, totalBookmarks, fetchBookmarks, loading,
     tagList, fetchTags,
     groupTree, groupFlat, fetchGroups,

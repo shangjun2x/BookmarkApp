@@ -407,6 +407,7 @@ router.post('/import/json', (req, res) => {
     }
 
     let imported = 0;
+    let failed = 0;
     const publicFlag = req.user.isGuest ? 1 : 0;
     const insertBookmark = db.prepare(
       'INSERT INTO bookmarks (title, url, description, is_public, user_id) VALUES (?, ?, ?, ?, ?)'
@@ -414,12 +415,18 @@ router.post('/import/json', (req, res) => {
 
     for (const b of bookmarks) {
       if (b.title && b.url) {
-        insertBookmark.run(b.title, b.url, b.description || '', publicFlag, req.user.id);
-        imported++;
+        try {
+          insertBookmark.run(b.title, b.url, b.description || '', publicFlag, req.user.id);
+          imported++;
+        } catch (itemErr) {
+          failed++;
+        }
+      } else {
+        failed++;
       }
     }
 
-    res.json({ message: `Imported ${imported} bookmarks` });
+    res.json({ message: `Imported ${imported} bookmarks` + (failed > 0 ? ` (${failed} failed)` : '') });
   } catch (err) {
     console.error('Import error:', err);
     res.status(500).json({ error: 'Internal server error' });
