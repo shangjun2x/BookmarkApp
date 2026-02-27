@@ -1,5 +1,5 @@
 node_modules/
-server/bookmarks.db
+server/bookmarks.db*
 client/build/
 .env
 *.log
