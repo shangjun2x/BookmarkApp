@@ -11,11 +11,11 @@ import ImportExportModal from '../components/ImportExportModal';
 export default function DashboardPage() {
   const { activeFilter } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [bookmarkModal, setBookmarkModal] = useState({ open: false, bookmark: null });
   const [tagModal, setTagModal] = useState({ open: false, tag: null });
   const [groupModal, setGroupModal] = useState({ open: false, group: null });
   const [importExportModal, setImportExportModal] = useState(false);
-  const [hoveredUrl, setHoveredUrl] = useState('');
 
   const getTitle = () => {
     if (activeFilter.type === 'all') return 'All Bookmarks';
@@ -25,7 +25,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
       <Sidebar
         open={sidebarOpen}
@@ -40,15 +40,15 @@ export default function DashboardPage() {
         <Header
           title={getTitle()}
           onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+          onSidebarCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          sidebarCollapsed={sidebarCollapsed}
           onAddBookmark={() => setBookmarkModal({ open: true, bookmark: null })}
-          hoveredUrl={hoveredUrl}
         />
 
         <div className="page-content">
           <BookmarkList
             onEdit={(bookmark) => setBookmarkModal({ open: true, bookmark })}
             onAddBookmark={() => setBookmarkModal({ open: true, bookmark: null })}
-            onHoverUrl={setHoveredUrl}
           />
         </div>
       </div>

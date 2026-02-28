@@ -255,6 +255,15 @@ input, select, textarea {
   flex: 1;
   margin-left: var(--sidebar-width);
   min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-collapsed .sidebar {
+  transform: translateX(-100%);
+}
+
+.sidebar-collapsed .main-content {
+  margin-left: 0;
 }
 
 .header {
@@ -316,16 +325,19 @@ input, select, textarea {
   height: 16px;
 }
 
-.hovered-url-label {
-  flex: 1;
-  min-width: 0;
-  font-size: 1.6rem;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 8px;
-  line-height: 1;
+.sidebar-collapse-btn {
+  display: flex;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.sidebar-collapse-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .page-content {
@@ -945,6 +957,10 @@ textarea.form-input {
 
   .mobile-menu-btn {
     display: flex;
+  }
+
+  .sidebar-collapse-btn {
+    display: none;
   }
 
   .bookmark-grid {
