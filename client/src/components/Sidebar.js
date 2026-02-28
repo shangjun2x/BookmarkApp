@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import {
   Bookmark, FolderOpen, Tag, ChevronRight, ChevronDown, Plus,
-  LogOut, Download, Settings, Home, Globe, Lock, User, Palette, Maximize2
+  LogOut, Download, Moon, Sun, Home, Globe, Lock, User, Palette, Maximize2
 } from 'lucide-react';
 
 function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0 }) {
@@ -208,7 +208,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
           <span>Import / Export</span>
         </button>
         <button className="sidebar-item" onClick={toggleTheme}>
-          <Settings size={16} />
+          {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
         </button>
         {user && (
