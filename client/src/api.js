@@ -1,6 +1,6 @@
 const API_BASE = process.env.NODE_ENV === 'production'
   ? '/api'
-  : 'http://localhost:3001/api';
+  : `http://${window.location.hostname}:3001/api`;
 
 function getHeaders() {
   const token = localStorage.getItem('token');

@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3001;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 // Middleware
-app.use(cors({ origin: IS_PROD ? undefined : 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: IS_PROD ? undefined : true, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 
 // Initialize database on startup
@@ -41,7 +41,7 @@ if (fs.existsSync(clientBuildPath)) {
   console.log('  Serving frontend from client/build');
 }
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🔖 Bookmark Manager running on http://localhost:${PORT}`);
   console.log(`   Database: ${path.join(__dirname, 'bookmarks.db')}\n`);
 });
