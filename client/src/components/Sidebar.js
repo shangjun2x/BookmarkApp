@@ -202,7 +202,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             <span style={{ minWidth: 32, textAlign: 'right' }}>{cardHeight || 'Auto'}</span>
           </div>
         </div>
-        <hr style={{ border: 'none', borderTop: '1px solid rgba(255, 255, 255, 0.1)', margin: '4px 0' }} />
+        <hr style={{ border: 'none', borderTop: '1px solid var(--sidebar-border)', margin: '4px 0' }} />
         <button className="sidebar-item" onClick={onImportExport}>
           <Download size={16} />
           <span>Import / Export</span>
