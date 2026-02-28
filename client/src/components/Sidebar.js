@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import {
   Bookmark, FolderOpen, Tag, ChevronRight, ChevronDown, Plus,
-  LogOut, Download, Settings, Home, Globe, Lock, User, Palette
+  LogOut, Download, Settings, Home, Globe, Lock, User, Palette, Maximize2
 } from 'lucide-react';
 
 function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0 }) {
@@ -48,7 +48,7 @@ function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0
 }
 
 export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddTag, onImportExport }) {
-  const { user, logout, activeFilter, setActiveFilter, groupTree, tagList, totalBookmarks, isGuest, theme, toggleTheme, defaultCardBg, setDefaultCardBg } = useApp();
+  const { user, logout, activeFilter, setActiveFilter, groupTree, tagList, totalBookmarks, isGuest, theme, toggleTheme, defaultCardBg, setDefaultCardBg, cardWidth, setCardWidth, cardHeight, setCardHeight } = useApp();
 
   return (
     <aside className={`sidebar ${open ? 'open' : ''}`}>
@@ -150,10 +150,6 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
 
       {/* Footer */}
       <div className="sidebar-footer">
-        <button className="sidebar-item" onClick={onImportExport}>
-          <Download size={16} />
-          <span>Import / Export</span>
-        </button>
         <div className="sidebar-item" style={{ cursor: 'default' }}>
           <Palette size={16} />
           <span style={{ flex: 1 }}>Card Color</span>
@@ -174,6 +170,43 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             </button>
           )}
         </div>
+        <div className="sidebar-item" style={{ cursor: 'default', flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Maximize2 size={16} />
+            <span>Card Size</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.75rem' }}>
+            <label style={{ minWidth: 36 }}>W</label>
+            <input
+              type="range"
+              min={200}
+              max={600}
+              step={10}
+              value={cardWidth}
+              onChange={(e) => setCardWidth(Number(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <span style={{ minWidth: 32, textAlign: 'right' }}>{cardWidth}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.75rem' }}>
+            <label style={{ minWidth: 36 }}>H</label>
+            <input
+              type="range"
+              min={0}
+              max={600}
+              step={10}
+              value={cardHeight}
+              onChange={(e) => setCardHeight(Number(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <span style={{ minWidth: 32, textAlign: 'right' }}>{cardHeight || 'Auto'}</span>
+          </div>
+        </div>
+        <hr style={{ border: 'none', borderTop: '1px solid rgba(255, 255, 255, 0.1)', margin: '4px 0' }} />
+        <button className="sidebar-item" onClick={onImportExport}>
+          <Download size={16} />
+          <span>Import / Export</span>
+        </button>
         <button className="sidebar-item" onClick={toggleTheme}>
           <Settings size={16} />
           <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>

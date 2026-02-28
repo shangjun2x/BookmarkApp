@@ -10,6 +10,8 @@ export function AppProvider({ children }) {
   });
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [defaultCardBg, setDefaultCardBg] = useState(() => localStorage.getItem('defaultCardBg') || '');
+  const [cardWidth, setCardWidth] = useState(() => parseInt(localStorage.getItem('cardWidth')) || 320);
+  const [cardHeight, setCardHeight] = useState(() => parseInt(localStorage.getItem('cardHeight')) || 0);
   const [bookmarkList, setBookmarkList] = useState([]);
   const [tagList, setTagList] = useState([]);
   const [groupTree, setGroupTree] = useState([]);
@@ -35,6 +37,18 @@ export function AppProvider({ children }) {
       localStorage.removeItem('defaultCardBg');
     }
   }, [defaultCardBg]);
+
+  // Card dimensions
+  useEffect(() => {
+    localStorage.setItem('cardWidth', cardWidth);
+  }, [cardWidth]);
+  useEffect(() => {
+    if (cardHeight) {
+      localStorage.setItem('cardHeight', cardHeight);
+    } else {
+      localStorage.removeItem('cardHeight');
+    }
+  }, [cardHeight]);
 
   const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
 
@@ -157,6 +171,8 @@ export function AppProvider({ children }) {
     isGuest: !!user?.isGuest,
     theme, toggleTheme,
     defaultCardBg, setDefaultCardBg,
+    cardWidth, setCardWidth,
+    cardHeight, setCardHeight,
     bookmarkList, totalBookmarks, fetchBookmarks, loading,
     tagList, fetchTags,
     groupTree, groupFlat, fetchGroups,

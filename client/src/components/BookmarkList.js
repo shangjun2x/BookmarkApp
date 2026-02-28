@@ -30,7 +30,7 @@ function getContrastColor(hex) {
   return luminance > 0.5 ? '#1a1a1a' : '#ffffff';
 }
 
-function BookmarkCard({ bookmark, onEdit, onHoverUrl }) {
+function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
   const { fetchBookmarks, fetchTags, fetchGroups, user, activeFilter, groupFlat, defaultCardBg } = useApp();
   const isOwnBookmark = !bookmark.user_name || bookmark.user_id === user?.id;
   const isGuestBookmark = bookmark.user_name === 'Guest';
@@ -57,6 +57,10 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl }) {
   const faviconUrl = getFaviconUrl(bookmark.url);
 
   const cardStyle = bgColor ? { backgroundColor: bgColor, color: fgColor, borderColor: bgColor } : {};
+  if (cardHeight) {
+    cardStyle.height = `${cardHeight}px`;
+    cardStyle.overflow = 'hidden';
+  }
 
   return (
     <div
@@ -145,7 +149,7 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl }) {
 }
 
 export default function BookmarkList({ onEdit, onAddBookmark, onHoverUrl }) {
-  const { bookmarkList, loading, totalBookmarks } = useApp();
+  const { bookmarkList, loading, totalBookmarks, cardWidth, cardHeight } = useApp();
 
   if (loading) {
     return (
@@ -173,9 +177,9 @@ export default function BookmarkList({ onEdit, onAddBookmark, onHoverUrl }) {
       <div style={{ marginBottom: 16, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
         {totalBookmarks} bookmark{totalBookmarks !== 1 ? 's' : ''}
       </div>
-      <div className="bookmark-grid">
+      <div className="bookmark-grid" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${cardWidth}px, 1fr))` }}>
         {bookmarkList.map(b => (
-          <BookmarkCard key={b.id} bookmark={b} onEdit={onEdit} onHoverUrl={onHoverUrl} />
+          <BookmarkCard key={b.id} bookmark={b} onEdit={onEdit} onHoverUrl={onHoverUrl} cardHeight={cardHeight} />
         ))}
       </div>
     </>
