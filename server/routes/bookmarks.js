@@ -263,12 +263,21 @@ router.post('/', (req, res) => {
     // Guest users can only create public bookmarks
     const publicFlag = req.user.isGuest ? 1 : (is_public ? 1 : 0);
 
-    // Check for duplicate URL + visibility (globally unique)
-    const duplicate = db.prepare(
-      'SELECT id FROM bookmarks WHERE url = ? AND is_public = ?'
-    ).get(url, publicFlag);
+    // Check for duplicate URL: public bookmarks are globally unique, private are per-user
+    let duplicate;
+    if (publicFlag) {
+      duplicate = db.prepare(
+        'SELECT id FROM bookmarks WHERE url = ? AND is_public = 1'
+      ).get(url);
+    } else {
+      duplicate = db.prepare(
+        'SELECT id FROM bookmarks WHERE url = ? AND is_public = 0 AND user_id = ?'
+      ).get(url, req.user.id);
+    }
     if (duplicate) {
-      return res.status(409).json({ error: `A bookmark with this URL already exists with the same visibility` });
+      return res.status(409).json({ error: publicFlag
+        ? 'A public bookmark with this URL already exists'
+        : 'You already have a private bookmark with this URL' });
     }
 
     const result = db.prepare(
@@ -350,12 +359,30 @@ router.put('/:id', (req, res) => {
 
     // Guest bookmarks must stay public
     const resolvedPublic = isGuestBookmark ? 1 : (is_public !== undefined ? (is_public ? 1 : 0) : existing.is_public);
+    const resolvedUrl = url || existing.url;
+
+    // Check for duplicate URL (exclude current bookmark)
+    if (resolvedPublic) {
+      const dup = db.prepare(
+        'SELECT id FROM bookmarks WHERE url = ? AND is_public = 1 AND id != ?'
+      ).get(resolvedUrl, req.params.id);
+      if (dup) {
+        return res.status(409).json({ error: 'A public bookmark with this URL already exists' });
+      }
+    } else {
+      const dup = db.prepare(
+        'SELECT id FROM bookmarks WHERE url = ? AND is_public = 0 AND user_id = ? AND id != ?'
+      ).get(resolvedUrl, req.user.id, req.params.id);
+      if (dup) {
+        return res.status(409).json({ error: 'You already have a private bookmark with this URL' });
+      }
+    }
 
     db.prepare(
       'UPDATE bookmarks SET title = ?, url = ?, description = ?, is_public = ?, bg_color = ?, group_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
     ).run(
       title || existing.title,
-      url || existing.url,
+      resolvedUrl,
       description !== undefined ? description : existing.description,
       resolvedPublic,
       bg_color !== undefined ? (bg_color || null) : existing.bg_color,

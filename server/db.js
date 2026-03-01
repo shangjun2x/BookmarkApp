@@ -102,9 +102,13 @@ function initializeDatabase() {
     db.exec("ALTER TABLE bookmarks ADD COLUMN bg_color TEXT DEFAULT NULL");
   }
 
-  // Migration: add unique index on (url, is_public)
+  // Migration: drop old global unique index and create scoped indexes
+  try { db.exec("DROP INDEX IF EXISTS idx_bookmarks_url_visibility"); } catch {}
   try {
-    db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_bookmarks_url_visibility ON bookmarks (url, is_public)");
+    // Public bookmarks: globally unique per URL
+    db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_bookmarks_url_public ON bookmarks (url) WHERE is_public = 1");
+    // Private bookmarks: unique per user per URL
+    db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_bookmarks_url_user_private ON bookmarks (url, user_id) WHERE is_public = 0");
   } catch {
     // Index may already exist or data has duplicates — skip
   }
