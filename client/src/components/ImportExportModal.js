@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { useI18n } from '../i18n';
 import * as api from '../api';
 import { exportBookmarks } from '../api';
 import toast from 'react-hot-toast';
@@ -7,6 +8,7 @@ import { X, Download, Upload, FileJson, FileText } from 'lucide-react';
 
 export default function ImportExportModal({ onClose }) {
   const { fetchBookmarks, fetchTags, fetchGroups } = useApp();
+  const { t } = useI18n();
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -14,7 +16,7 @@ export default function ImportExportModal({ onClose }) {
     try {
       const blob = await exportBookmarks.json();
       downloadBlob(blob, 'bookmarks-export.json');
-      toast.success('Exported as JSON');
+      toast.success(t('importExport.exportedJson'));
     } catch (err) {
       toast.error('Export failed: ' + err.message);
     }
@@ -24,7 +26,7 @@ export default function ImportExportModal({ onClose }) {
     try {
       const blob = await exportBookmarks.html();
       downloadBlob(blob, 'bookmarks-export.html');
-      toast.success('Exported as HTML');
+      toast.success(t('importExport.exportedHtml'));
     } catch (err) {
       toast.error('Export failed: ' + err.message);
     }
@@ -91,7 +93,7 @@ export default function ImportExportModal({ onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Import / Export</h2>
+          <h2>{t('importExport.title')}</h2>
           <button className="btn btn-ghost btn-icon" onClick={onClose}>
             <X size={18} />
           </button>
@@ -100,26 +102,25 @@ export default function ImportExportModal({ onClose }) {
         <div className="modal-body">
           <h3 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 12 }}>
             <Download size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-            Export Bookmarks
+            {t('importExport.exportBookmarks')}
           </h3>
           <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
             <button className="btn btn-secondary" onClick={handleExportJson}>
               <FileJson size={16} />
-              Export as JSON
+              {t('importExport.exportJson')}
             </button>
             <button className="btn btn-secondary" onClick={handleExportHtml}>
               <FileText size={16} />
-              Export as HTML
+              {t('importExport.exportHtml')}
             </button>
           </div>
 
           <h3 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 12 }}>
             <Upload size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-            Import Bookmarks
+            {t('importExport.importBookmarks')}
           </h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
-            Import bookmarks from a JSON or HTML (Netscape) file. Supported formats include exports from Servas, 
-            Firefox, Chrome, and most other bookmark managers.
+            {t('importExport.importHint')}
           </p>
           <input
             ref={fileInputRef}
@@ -134,12 +135,12 @@ export default function ImportExportModal({ onClose }) {
             disabled={importing}
           >
             <Upload size={16} />
-            {importing ? 'Importing...' : 'Choose File to Import'}
+            {importing ? t('importExport.importing') : t('importExport.chooseFile')}
           </button>
         </div>
 
         <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>Close</button>
+          <button className="btn btn-secondary" onClick={onClose}>{t('importExport.close')}</button>
         </div>
       </div>
     </div>

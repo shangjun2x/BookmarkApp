@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../contexts/AppContext';
+import { useI18n } from '../i18n';
 import * as api from '../api';
 import toast from 'react-hot-toast';
 import { ExternalLink, Edit2, Trash2, Bookmark, Globe, Lock, FolderOpen } from 'lucide-react';
@@ -13,9 +14,10 @@ function getFaviconUrl(url) {
   }
 }
 
-function formatDate(dateStr) {
+function formatDate(dateStr, language) {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const localeMap = { en: 'en-US', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR' };
+  return d.toLocaleDateString(localeMap[language] || 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 // Compute contrasting foreground color from a hex background
@@ -32,6 +34,7 @@ function getContrastColor(hex) {
 
 function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
   const { fetchBookmarks, fetchTags, fetchGroups, user, activeFilter, groupFlat, defaultCardBg } = useApp();
+  const { t, language } = useI18n();
   const isOwnBookmark = !bookmark.user_name || bookmark.user_id === user?.id;
   const isGuestBookmark = bookmark.user_name === 'Guest';
   const canEdit = isOwnBookmark || isGuestBookmark || bookmark.is_public === 1;
@@ -42,10 +45,10 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
   const groupName = effectiveGroupId ? groupFlat.find(g => g.id === effectiveGroupId)?.name : null;
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${bookmark.title}"?`)) return;
+    if (!window.confirm(t('bookmarkList.confirmDelete', { title: bookmark.title }))) return;
     try {
       await api.bookmarks.delete(bookmark.id);
-      toast.success('Bookmark deleted');
+      toast.success(t('bookmarkModal.deleted'));
       fetchBookmarks();
       fetchTags();
       fetchGroups();
@@ -85,11 +88,11 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
           </div>
         </div>
         {bookmark.is_public ? (
-          <span title="Public" style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <span title={t('bookmarkList.public')} style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
             <Globe size={14} />
           </span>
         ) : (
-          <span title="Private" style={{ color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <span title={t('bookmarkList.private')} style={{ color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
             <Lock size={14} />
           </span>
         )}
@@ -119,7 +122,7 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="bookmark-date" style={fgColor ? { color: fgColor + 'aa' } : {}}>{formatDate(bookmark.created_at)}</span>
+          <span className="bookmark-date" style={fgColor ? { color: fgColor + 'aa' } : {}}>{formatDate(bookmark.created_at, language)}</span>
           {bookmark.user_name && !isOwnBookmark && (
             <span style={{ fontSize: '0.75rem', color: fgColor ? fgColor + '99' : 'var(--text-tertiary)', fontStyle: 'italic' }}>
               by {bookmark.user_name}
@@ -127,16 +130,16 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
           )}
         </div>
         <div className="bookmark-card-actions">
-          <a href={bookmark.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-icon" title="Open link" style={fgColor ? { color: fgColor } : {}}>
+          <a href={bookmark.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-icon" title={t('bookmarkList.openLink')} style={fgColor ? { color: fgColor } : {}}>
             <ExternalLink size={14} />
           </a>
           {canEdit && (
             <>
-              <button className="btn btn-ghost btn-icon" onClick={() => onEdit(bookmark)} title={isOwnBookmark || isGuestBookmark ? 'Edit' : 'Assign group & tag'} style={fgColor ? { color: fgColor } : {}}>
+              <button className="btn btn-ghost btn-icon" onClick={() => onEdit(bookmark)} title={isOwnBookmark || isGuestBookmark ? t('bookmarkList.edit') : t('bookmarkList.assignGroupTag')} style={fgColor ? { color: fgColor } : {}}>
                 <Edit2 size={14} />
               </button>
               {(isOwnBookmark || isGuestBookmark) && (
-                <button className="btn btn-ghost btn-icon" onClick={handleDelete} title="Delete" style={{ color: fgColor || 'var(--danger)' }}>
+                <button className="btn btn-ghost btn-icon" onClick={handleDelete} title={t('bookmarkList.delete')} style={{ color: fgColor || 'var(--danger)' }}>
                   <Trash2 size={14} />
                 </button>
               )}
@@ -150,6 +153,7 @@ function BookmarkCard({ bookmark, onEdit, onHoverUrl, cardHeight }) {
 
 export default function BookmarkList({ onEdit, onAddBookmark, onHoverUrl }) {
   const { bookmarkList, loading, totalBookmarks, cardWidth, cardHeight } = useApp();
+  const { t } = useI18n();
 
   if (loading) {
     return (
@@ -163,10 +167,10 @@ export default function BookmarkList({ onEdit, onAddBookmark, onHoverUrl }) {
     return (
       <div className="empty-state">
         <Bookmark size={64} />
-        <h3>No bookmarks found</h3>
-        <p>Add your first bookmark to get started organizing your links.</p>
+        <h3>{t('bookmarkList.noBookmarks')}</h3>
+        <p>{t('bookmarkList.emptyHint')}</p>
         <button className="btn btn-primary" onClick={onAddBookmark}>
-          Add Bookmark
+          {t('bookmarkList.addBookmark')}
         </button>
       </div>
     );
@@ -175,7 +179,7 @@ export default function BookmarkList({ onEdit, onAddBookmark, onHoverUrl }) {
   return (
     <>
       <div style={{ marginBottom: 16, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-        {totalBookmarks} bookmark{totalBookmarks !== 1 ? 's' : ''}
+        {totalBookmarks !== 1 ? t('bookmarkList.bookmarkCountPlural', { count: totalBookmarks }) : t('bookmarkList.bookmarkCount', { count: totalBookmarks })}
       </div>
       <div className="bookmark-grid" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${cardWidth}px, 1fr))` }}>
         {bookmarkList.map(b => (

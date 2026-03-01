@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { useI18n, LANGUAGES } from '../i18n';
 import {
   Bookmark, FolderOpen, Tag, ChevronRight, ChevronDown, Plus,
-  LogOut, Download, Moon, Sun, Home, Globe, Lock, User, Palette, Maximize2
+  LogOut, Download, Moon, Sun, Home, Globe, Lock, User, Palette, Maximize2, Languages
 } from 'lucide-react';
 
 function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0 }) {
@@ -47,14 +48,15 @@ function GroupTreeItem({ group, activeFilter, setActiveFilter, onEdit, level = 0
   );
 }
 
-export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddTag, onImportExport }) {
+export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddTag, onEditTag, onImportExport }) {
   const { user, logout, activeFilter, setActiveFilter, groupTree, tagList, totalBookmarks, isGuest, theme, toggleTheme, defaultCardBg, setDefaultCardBg, cardWidth, setCardWidth, cardHeight, setCardHeight } = useApp();
+  const { t, language, setLanguage } = useI18n();
 
   return (
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="sidebar-logo">
         <span>🔖</span>
-        <h1>Bookmarks</h1>
+        <h1>{t('sidebar.bookmarks')}</h1>
       </div>
 
       {/* Navigation */}
@@ -65,7 +67,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             onClick={() => setActiveFilter({ type: 'all' })}
           >
             <Home size={16} />
-            <span>All Bookmarks</span>
+            <span>{t('sidebar.allBookmarks')}</span>
             {activeFilter.type === 'all' && <span className="count">{totalBookmarks}</span>}
           </button>
         )}
@@ -75,7 +77,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             onClick={() => setActiveFilter({ type: 'mine' })}
           >
             <User size={16} />
-            <span>My Bookmarks</span>
+            <span>{t('sidebar.myBookmarks')}</span>
             {activeFilter.type === 'mine' && <span className="count">{totalBookmarks}</span>}
           </button>
         )}
@@ -85,7 +87,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             onClick={() => setActiveFilter({ type: 'private' })}
           >
             <Lock size={16} />
-            <span>Private Bookmarks</span>
+            <span>{t('sidebar.privateBookmarks')}</span>
             {activeFilter.type === 'private' && <span className="count">{totalBookmarks}</span>}
           </button>
         )}
@@ -94,7 +96,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
           onClick={() => setActiveFilter({ type: 'public' })}
         >
           <Globe size={16} />
-          <span>Public Bookmarks</span>
+          <span>{t('sidebar.publicBookmarks')}</span>
           {activeFilter.type === 'public' && <span className="count">{totalBookmarks}</span>}
         </button>
       </div>
@@ -103,7 +105,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
       {!isGuest && (
       <div className="sidebar-section">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 12 }}>
-          <span className="sidebar-section-title">Groups</span>
+          <span className="sidebar-section-title">{t('sidebar.groups')}</span>
           <button className="btn-ghost" onClick={onAddGroup} style={{ padding: 2, background: 'none', border: 'none', color: 'var(--text-sidebar-heading)', cursor: 'pointer' }}>
             <Plus size={14} />
           </button>
@@ -124,7 +126,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
       {!isGuest && (
       <div className="sidebar-section">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 12 }}>
-          <span className="sidebar-section-title">Tags</span>
+          <span className="sidebar-section-title">{t('sidebar.tags')}</span>
           <button className="btn-ghost" onClick={onAddTag} style={{ padding: 2, background: 'none', border: 'none', color: 'var(--text-sidebar-heading)', cursor: 'pointer' }}>
             <Plus size={14} />
           </button>
@@ -134,6 +136,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             key={tag.id}
             className={`sidebar-item ${activeFilter.type === 'tag' && activeFilter.id === tag.id ? 'active' : ''}`}
             onClick={() => setActiveFilter({ type: 'tag', id: tag.id, name: tag.name })}
+            onDoubleClick={() => onEditTag(tag)}
           >
             <span className="tag-dot" style={{ backgroundColor: tag.color }} />
             <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tag.name}</span>
@@ -142,7 +145,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
         ))}
         {tagList.length === 0 && (
           <div style={{ padding: '4px 12px', fontSize: '0.8rem', color: 'var(--text-sidebar-heading)' }}>
-            No tags yet
+            {t('sidebar.noTags')}
           </div>
         )}
       </div>
@@ -152,7 +155,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
       <div className="sidebar-footer">
         <div className="sidebar-item" style={{ cursor: 'default' }}>
           <Palette size={16} />
-          <span style={{ flex: 1 }}>Card Color</span>
+          <span style={{ flex: 1 }}>{t('sidebar.cardColor')}</span>
           <input
             type="color"
             value={defaultCardBg || '#ffffff'}
@@ -205,12 +208,25 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
         <hr style={{ border: 'none', borderTop: '1px solid var(--sidebar-border)', margin: '4px 0' }} />
         <button className="sidebar-item" onClick={onImportExport}>
           <Download size={16} />
-          <span>Import / Export</span>
+          <span>{t('sidebar.importExport')}</span>
         </button>
         <button className="sidebar-item" onClick={toggleTheme}>
           {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-          <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+          <span>{theme === 'light' ? t('sidebar.darkMode') : t('sidebar.lightMode')}</span>
         </button>
+        <div className="sidebar-item" style={{ cursor: 'default' }}>
+          <Languages size={16} />
+          <span style={{ flex: 1 }}>{t('sidebar.language')}</span>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            style={{ padding: '2px 4px', borderRadius: 4, border: '1px solid var(--sidebar-border)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', fontSize: '0.75rem', cursor: 'pointer' }}
+          >
+            {LANGUAGES.map(l => (
+              <option key={l.code} value={l.code}>{l.label}</option>
+            ))}
+          </select>
+        </div>
         {user && (
           <div className="sidebar-user">
             <div className="sidebar-user-avatar">

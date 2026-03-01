@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AppProvider, useApp } from './contexts/AppContext';
+import { I18nProvider } from './i18n';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -31,6 +32,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
+      <I18nProvider>
       <AppProvider>
         <AppRoutes />
         <Toaster
@@ -47,6 +49,7 @@ export default function App() {
           }}
         />
       </AppProvider>
+      </I18nProvider>
     </BrowserRouter>
   );
 }

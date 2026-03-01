@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { useI18n } from '../i18n';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import BookmarkList from '../components/BookmarkList';
@@ -10,6 +11,7 @@ import ImportExportModal from '../components/ImportExportModal';
 
 export default function DashboardPage() {
   const { activeFilter } = useApp();
+  const { t } = useI18n();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [bookmarkModal, setBookmarkModal] = useState({ open: false, bookmark: null });
@@ -18,10 +20,13 @@ export default function DashboardPage() {
   const [importExportModal, setImportExportModal] = useState(false);
 
   const getTitle = () => {
-    if (activeFilter.type === 'all') return 'All Bookmarks';
-    if (activeFilter.type === 'group') return activeFilter.name || 'Group';
-    if (activeFilter.type === 'tag') return `Tag: ${activeFilter.name || ''}`;
-    return 'Bookmarks';
+    if (activeFilter.type === 'all') return t('dashboard.allBookmarks');
+    if (activeFilter.type === 'mine') return t('sidebar.myBookmarks');
+    if (activeFilter.type === 'private') return t('sidebar.privateBookmarks');
+    if (activeFilter.type === 'public') return t('sidebar.publicBookmarks');
+    if (activeFilter.type === 'group') return activeFilter.name || t('dashboard.group');
+    if (activeFilter.type === 'tag') return t('dashboard.tag', { name: activeFilter.name || '' });
+    return t('dashboard.bookmarks');
   };
 
   return (
@@ -33,6 +38,7 @@ export default function DashboardPage() {
         onAddGroup={() => setGroupModal({ open: true, group: null })}
         onEditGroup={(group) => setGroupModal({ open: true, group })}
         onAddTag={() => setTagModal({ open: true, tag: null })}
+        onEditTag={(tag) => setTagModal({ open: true, tag })}
         onImportExport={() => setImportExportModal(true)}
       />
 

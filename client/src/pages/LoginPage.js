@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../contexts/AppContext';
+import { useI18n } from '../i18n';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const { login, guestLogin } = useApp();
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ export default function LoginPage() {
     setGuestLoading(true);
     try {
       await guestLogin();
-      toast.success('Welcome, Guest!');
+      toast.success(t('login.welcomeGuest'));
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -27,7 +29,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      toast.success('Welcome back!');
+      toast.success(t('login.welcomeUser'));
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -40,12 +42,12 @@ export default function LoginPage() {
       <div className="auth-card">
         <div className="auth-card-header">
           <span>🔖</span>
-          <h1>Welcome Back</h1>
-          <p>Sign in to your bookmark manager</p>
+          <h1>{t('login.welcomeBack')}</h1>
+          <p>{t('login.subtitle')}</p>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('login.email')}</label>
             <input
               type="email"
               className="form-input"
@@ -57,7 +59,7 @@ export default function LoginPage() {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label">{t('login.password')}</label>
             <input
               type="password"
               className="form-input"
@@ -68,12 +70,12 @@ export default function LoginPage() {
             />
           </div>
           <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: 8 }} disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? t('login.signingIn') : t('login.signIn')}
           </button>
         </form>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0' }}>
           <hr style={{ flex: 1, border: 'none', borderTop: '1px solid var(--border)' }} />
-          <span style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>or</span>
+          <span style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>{t('login.or')}</span>
           <hr style={{ flex: 1, border: 'none', borderTop: '1px solid var(--border)' }} />
         </div>
         <button
@@ -83,10 +85,10 @@ export default function LoginPage() {
           onClick={handleGuestLogin}
           disabled={guestLoading}
         >
-          {guestLoading ? 'Entering...' : 'Continue as Guest'}
+          {guestLoading ? t('login.entering') : t('login.guest')}
         </button>
         <div className="auth-footer">
-          Don't have an account? <Link to="/register">Create one</Link>
+          {t('login.noAccount')} <Link to="/register">{t('login.createOne')}</Link>
         </div>
       </div>
     </div>

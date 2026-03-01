@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { useI18n } from '../i18n';
 import * as api from '../api';
 import toast from 'react-hot-toast';
 import { X, Globe, Lock } from 'lucide-react';
 
 export default function BookmarkModal({ bookmark, onClose }) {
   const { fetchBookmarks, fetchTags, fetchGroups, isGuest, groupFlat, tagList, user } = useApp();
+  const { t } = useI18n();
   const isEditing = !!bookmark;
   const isOwner = !bookmark || bookmark.user_id === user?.id;
   const isGuestBookmark = bookmark?.user_name === 'Guest';
@@ -45,7 +47,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !url.trim()) {
-      toast.error('Title and URL are required');
+      toast.error(t('bookmarkModal.titleUrlRequired'));
       return;
     }
 
@@ -63,10 +65,10 @@ export default function BookmarkModal({ bookmark, onClose }) {
 
       if (isEditing) {
         const result = await api.bookmarks.update(bookmark.id, data);
-        toast.success(isRestricted ? 'Group & tag assigned' : 'Bookmark updated');
+        toast.success(isRestricted ? t('bookmarkModal.assigned') : t('bookmarkModal.updated'));
       } else {
         await api.bookmarks.create(data);
-        toast.success('Bookmark added');
+        toast.success(t('bookmarkModal.added'));
       }
 
       fetchBookmarks();
@@ -84,7 +86,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{isRestricted ? 'Assign Group & Tag' : (isEditing ? 'Edit Bookmark' : 'Add Bookmark')}</h2>
+          <h2>{isRestricted ? t('bookmarkModal.assignGroupTag') : (isEditing ? t('bookmarkModal.editBookmark') : t('bookmarkModal.addBookmark'))}</h2>
           <button className="btn btn-ghost btn-icon" onClick={onClose}>
             <X size={18} />
           </button>
@@ -93,13 +95,13 @@ export default function BookmarkModal({ bookmark, onClose }) {
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             <div className="form-group">
-              <label className="form-label">URL *</label>
+              <label className="form-label">{t('bookmarkModal.url')}</label>
               <input
                 type="url"
                 className="form-input"
                 value={url}
                 onChange={e => setUrl(e.target.value)}
-                placeholder="https://example.com"
+                placeholder={t('bookmarkModal.urlPlaceholder')}
                 required
                 autoFocus={!isEditing}
                 disabled={isRestricted}
@@ -108,13 +110,13 @@ export default function BookmarkModal({ bookmark, onClose }) {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Title *</label>
+              <label className="form-label">{t('bookmarkModal.title')}</label>
               <input
                 type="text"
                 className="form-input"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="Bookmark title"
+                placeholder={t('bookmarkModal.titlePlaceholder')}
                 required
                 disabled={isRestricted}
                 style={isRestricted ? { opacity: 0.5 } : {}}
@@ -122,12 +124,12 @@ export default function BookmarkModal({ bookmark, onClose }) {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Description</label>
+              <label className="form-label">{t('bookmarkModal.description')}</label>
               <textarea
                 className="form-input"
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t('bookmarkModal.descriptionPlaceholder')}
                 rows={3}
                 disabled={isRestricted}
                 style={isRestricted ? { opacity: 0.5 } : {}}
@@ -136,13 +138,13 @@ export default function BookmarkModal({ bookmark, onClose }) {
 
             {(!isGuest || isRestricted) && (
               <div className="form-group">
-                <label className="form-label">Group</label>
+                <label className="form-label">{t('bookmarkModal.group')}</label>
                 <select
                   className="form-select"
                   value={groupId}
                   onChange={e => setGroupId(e.target.value)}
                 >
-                  <option value="">— No group —</option>
+                  <option value="">{t('bookmarkModal.noGroup')}</option>
                   {groupFlat.map(g => (
                     <option key={g.id} value={g.id}>{g.name}</option>
                   ))}
@@ -152,7 +154,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
 
             {(!isGuest || isRestricted) && (
               <div className="form-group">
-                <label className="form-label">Tags</label>
+                <label className="form-label">{t('bookmarkModal.tags')}</label>
                 {tagList.length > 0 ? (
                   <div className="tag-selector">
                     {tagList.map(tag => (
@@ -173,7 +175,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
                   </div>
                 ) : (
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>
-                    No tags created yet. Add tags from the sidebar.
+                    {t('bookmarkModal.noTags')}
                   </p>
                 )}
               </div>
@@ -181,7 +183,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
 
             {!isRestricted && (
               <div className="form-group">
-                <label className="form-label">Card Color</label>
+                <label className="form-label">{t('bookmarkModal.cardColor')}</label>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
                   {presetColors.map((c, i) => (
                     <button
@@ -194,7 +196,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
                         backgroundColor: c || 'var(--bg-card)',
                         cursor: 'pointer', padding: 0, position: 'relative',
                       }}
-                      title={c || 'Default'}
+                      title={c || t('bookmarkModal.defaultColor')}
                     >
                       {!c && <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>×</span>}
                     </button>
@@ -204,7 +206,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
                     value={bgColor || '#ffffff'}
                     onChange={e => setBgColor(e.target.value)}
                     style={{ width: 28, height: 28, padding: 0, border: 'none', cursor: 'pointer', borderRadius: '50%' }}
-                    title="Custom color"
+                    title={t('bookmarkModal.customColor')}
                   />
                 </div>
               </div>
@@ -212,7 +214,7 @@ export default function BookmarkModal({ bookmark, onClose }) {
 
             {!isRestricted && (
               <div className="form-group">
-                <label className="form-label">Visibility</label>
+                <label className="form-label">{t('bookmarkModal.visibility')}</label>
                 <button
                   type="button"
                   className={`visibility-toggle ${isPublic ? 'public' : 'private'}`}
@@ -235,16 +237,16 @@ export default function BookmarkModal({ bookmark, onClose }) {
                   }}
                 >
                   {isPublic ? <Globe size={16} /> : <Lock size={16} />}
-                  {isPublic ? 'Public — visible to all users' : 'Private — only visible to you'}
+                  {isPublic ? t('bookmarkModal.publicHint') : t('bookmarkModal.privateHint')}
                 </button>
               </div>
             )}
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>{t('bookmarkModal.cancel')}</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Saving...' : (isEditing ? 'Update' : 'Add Bookmark')}
+              {loading ? t('bookmarkModal.saving') : (isEditing ? t('bookmarkModal.update') : t('bookmarkModal.add'))}
             </button>
           </div>
         </form>
