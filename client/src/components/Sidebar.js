@@ -167,7 +167,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             <button
               onClick={() => setDefaultCardBg('')}
               style={{ padding: '0 4px', background: 'none', border: 'none', color: 'var(--text-sidebar-heading)', cursor: 'pointer', fontSize: '0.75rem' }}
-              title={t('sidebar.resetDefault')}
+              title="Reset to default"
             >
               ✕
             </button>
@@ -176,10 +176,10 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
         <div className="sidebar-item" style={{ cursor: 'default', flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Maximize2 size={16} />
-            <span>{t('sidebar.cardSize')}</span>
+            <span>Card Size</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.75rem' }}>
-            <label style={{ minWidth: 36 }}>{t('sidebar.cardSizeWidth')}</label>
+            <label style={{ minWidth: 36 }}>W</label>
             <input
               type="range"
               min={200}
@@ -192,7 +192,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
             <span style={{ minWidth: 32, textAlign: 'right' }}>{cardWidth}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.75rem' }}>
-            <label style={{ minWidth: 36 }}>{t('sidebar.cardSizeHeight')}</label>
+            <label style={{ minWidth: 36 }}>H</label>
             <input
               type="range"
               min={0}
@@ -202,7 +202,7 @@ export default function Sidebar({ open, onClose, onAddGroup, onEditGroup, onAddT
               onChange={(e) => setCardHeight(Number(e.target.value))}
               style={{ flex: 1 }}
             />
-            <span style={{ minWidth: 32, textAlign: 'right' }}>{cardHeight || t('sidebar.auto')}</span>
+            <span style={{ minWidth: 32, textAlign: 'right' }}>{cardHeight || 'Auto'}</span>
           </div>
         </div>
         <hr style={{ border: 'none', borderTop: '1px solid var(--sidebar-border)', margin: '4px 0' }} />
