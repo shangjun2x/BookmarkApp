@@ -3,3 +3,4 @@ server/bookmarks.db*
 client/build/
 .env
 *.log
+._*
