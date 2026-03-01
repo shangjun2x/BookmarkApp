@@ -13,6 +13,8 @@ A self-hosted bookmark management tool built with **React** and **Node.js**, pow
 
 ### Organization
 - **Tags** — color-coded labels (16 preset colors) to categorize bookmarks; user-scoped
+  - **Edit tags** — double-click a tag in the sidebar to modify its name and color
+  - **Delete tags** — remove tags from the edit dialog (bookmarks are preserved)
 - **Groups** — nested folder structure with unlimited depth for hierarchical organization
 - **Per-user group assignment** — assign other users' public bookmarks into your own groups and tags
 
@@ -34,6 +36,12 @@ A self-hosted bookmark management tool built with **React** and **Node.js**, pow
 - **Dark / Light theme** toggle with persistent preference
 - **Default card background color** — set a global card color from the sidebar
 - **Card width and height sliders** — adjust the bookmark grid card dimensions (persisted in browser)
+
+### Internationalization (i18n)
+- **7 languages supported**: English, 中文 (Chinese), 日本語 (Japanese), 한국어 (Korean), Español (Spanish), Deutsch (German), Français (French)
+- **Language switcher** available in the header toolbar and sidebar footer
+- Language preference persisted in browser across sessions
+- Locale-aware date formatting
 
 ### UI
 - **Responsive design** — works on desktop and mobile with collapsible sidebar
@@ -102,8 +110,8 @@ The app will be available at:
 ### Tags
 
 - **Create**: Click the **+** button next to "Tags" in the sidebar. Pick a name and color from 16 presets.
-- **Edit**: (via bookmark edit dialog) Assign or remove tags when editing a bookmark.
-- **Delete**: Open the tag edit dialog and click "Delete".
+- **Edit**: Double-click a tag in the sidebar to modify its name and color.
+- **Delete**: Open the tag edit dialog (double-click) and click "Delete". Bookmarks are preserved.
 - **Filter**: Click a tag in the sidebar to show matching bookmarks.
 
 ### Search & Filters
@@ -129,6 +137,7 @@ The app will be available at:
 | **Card Size — W** | Slider (200–600px) to control the minimum card width in the grid. |
 | **Card Size — H** | Slider (0–600px) to set a fixed card height. 0 = auto height. |
 | **Dark / Light Mode** | Toggle between dark and light themes. |
+| **Language** | Switch between English, 中文, 日本語, 한국어, Español, Deutsch, and Français. Also available in the header toolbar. |
 
 All customization settings are saved in your browser and persist across sessions.
 
@@ -155,12 +164,21 @@ BookmarkApp/
 │       ├── index.css           # All styles — themes, layout, components
 │       ├── App.js              # Router setup (login, register, dashboard)
 │       ├── api.js              # API client — all HTTP calls to the backend
+│       ├── i18n/               # Internationalization
+│       │   ├── index.js        # I18nProvider context, useI18n hook, language list
+│       │   ├── en.js           # English translations
+│       │   ├── zh.js           # Chinese translations
+│       │   ├── ja.js           # Japanese translations
+│       │   ├── ko.js           # Korean translations
+│       │   ├── es.js           # Spanish translations
+│       │   ├── de.js           # German translations
+│       │   └── fr.js           # French translations
 │       ├── contexts/
 │       │   ├── AppContext.js    # Central state — bookmarks, tags, groups, filters, theme, card settings
 │       │   └── AuthContext.js   # (Unused — auth is in AppContext)
 │       ├── components/
-│       │   ├── Sidebar.js      # Navigation, groups tree, tags, card settings, user profile
-│       │   ├── Header.js       # Page title, search bar, add bookmark button
+│       │   ├── Sidebar.js      # Navigation, groups tree, tags, card settings, language switcher, user profile
+│       │   ├── Header.js       # Page title, search bar, language switcher, add bookmark button
 │       │   ├── BookmarkList.js # Responsive bookmark grid with customizable card dimensions
 │       │   ├── BookmarkModal.js# Create/edit bookmark dialog
 │       │   ├── GroupModal.js   # Create/edit group dialog
