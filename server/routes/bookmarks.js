@@ -64,6 +64,73 @@ router.get('/public', optionalAuth, (req, res) => {
   }
 });
 
+// Export bookmarks as JSON (all visible: own + public for logged-in, public-only for guest)
+router.get('/export/json', optionalAuth, (req, res) => {
+  try {
+    const db = getDb();
+    let bookmarks;
+    if (req.user) {
+      bookmarks = db.prepare('SELECT * FROM bookmarks WHERE user_id = ? OR is_public = 1 ORDER BY created_at DESC').all(req.user.id);
+    } else {
+      bookmarks = db.prepare('SELECT * FROM bookmarks WHERE is_public = 1 ORDER BY created_at DESC').all();
+    }
+
+    const tagStmt = db.prepare(`
+      SELECT t.* FROM tags t
+      JOIN bookmark_tags bt ON t.id = bt.tag_id
+      WHERE bt.bookmark_id = ?
+    `);
+
+    const result = bookmarks.map(b => ({
+      ...b,
+      tags: tagStmt.all(b.id),
+    }));
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename=bookmarks-export.json');
+    res.json(result);
+  } catch (err) {
+    console.error('Export error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Export bookmarks as HTML (all visible: own + public for logged-in, public-only for guest)
+router.get('/export/html', optionalAuth, (req, res) => {
+  try {
+    const db = getDb();
+    let bookmarks;
+    if (req.user) {
+      bookmarks = db.prepare('SELECT * FROM bookmarks WHERE user_id = ? OR is_public = 1 ORDER BY created_at DESC').all(req.user.id);
+    } else {
+      bookmarks = db.prepare('SELECT * FROM bookmarks WHERE is_public = 1 ORDER BY created_at DESC').all();
+    }
+
+    let html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks</H1>
+<DL><p>\n`;
+
+    for (const b of bookmarks) {
+      const ts = Math.floor(new Date(b.created_at).getTime() / 1000);
+      html += `  <DT><A HREF="${b.url}" ADD_DATE="${ts}">${b.title}</A>\n`;
+      if (b.description) {
+        html += `  <DD>${b.description}\n`;
+      }
+    }
+
+    html += `</DL><p>`;
+
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Disposition', 'attachment; filename=bookmarks-export.html');
+    res.send(html);
+  } catch (err) {
+    console.error('Export error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.use(authenticateToken);
 
 // Get all bookmarks (with optional filters)
@@ -335,63 +402,6 @@ router.delete('/:id', (req, res) => {
     res.json({ message: 'Bookmark deleted' });
   } catch (err) {
     console.error('Delete bookmark error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Export bookmarks as JSON
-router.get('/export/json', (req, res) => {
-  try {
-    const db = getDb();
-    const bookmarks = db.prepare('SELECT * FROM bookmarks WHERE user_id = ? ORDER BY created_at DESC').all(req.user.id);
-
-    const tagStmt = db.prepare(`
-      SELECT t.* FROM tags t
-      JOIN bookmark_tags bt ON t.id = bt.tag_id
-      WHERE bt.bookmark_id = ?
-    `);
-
-    const result = bookmarks.map(b => ({
-      ...b,
-      tags: tagStmt.all(b.id),
-    }));
-
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', 'attachment; filename=bookmarks-export.json');
-    res.json(result);
-  } catch (err) {
-    console.error('Export error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Export bookmarks as HTML
-router.get('/export/html', (req, res) => {
-  try {
-    const db = getDb();
-    const bookmarks = db.prepare('SELECT * FROM bookmarks WHERE user_id = ? ORDER BY created_at DESC').all(req.user.id);
-
-    let html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<TITLE>Bookmarks</TITLE>
-<H1>Bookmarks</H1>
-<DL><p>\n`;
-
-    for (const b of bookmarks) {
-      const ts = Math.floor(new Date(b.created_at).getTime() / 1000);
-      html += `  <DT><A HREF="${b.url}" ADD_DATE="${ts}">${b.title}</A>\n`;
-      if (b.description) {
-        html += `  <DD>${b.description}\n`;
-      }
-    }
-
-    html += `</DL><p>`;
-
-    res.setHeader('Content-Type', 'text/html');
-    res.setHeader('Content-Disposition', 'attachment; filename=bookmarks-export.html');
-    res.send(html);
-  } catch (err) {
-    console.error('Export error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

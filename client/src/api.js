@@ -148,14 +148,12 @@ export const groups = {
 export const exportBookmarks = {
   json: () => {
     const token = localStorage.getItem('token');
-    return fetch(`${API_BASE}/bookmarks/export/json`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(r => r.blob());
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    return fetch(`${API_BASE}/bookmarks/export/json`, { headers }).then(r => r.blob());
   },
   html: () => {
     const token = localStorage.getItem('token');
-    return fetch(`${API_BASE}/bookmarks/export/html`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(r => r.blob());
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    return fetch(`${API_BASE}/bookmarks/export/html`, { headers }).then(r => r.blob());
   },
 };
