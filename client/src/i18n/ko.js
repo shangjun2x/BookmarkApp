@@ -117,6 +117,7 @@ const ko = {
   'importExport.exportHtml': 'HTML로 내보내기',
   'importExport.importBookmarks': '북마크 가져오기',
   'importExport.importHint': 'JSON 또는 HTML(Netscape) 파일에서 북마크를 가져옵니다. Servas, Firefox, Chrome 및 대부분의 북마크 관리자 내보내기 형식을 지원합니다.',
+  'importExport.guestImportHint': '게스트로 가져온 북마크는 공개됩니다.',
   'importExport.importing': '가져오는 중...',
   'importExport.chooseFile': '가져올 파일 선택',
   'importExport.close': '닫기',

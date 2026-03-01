@@ -117,6 +117,7 @@ const en = {
   'importExport.exportHtml': 'Export as HTML',
   'importExport.importBookmarks': 'Import Bookmarks',
   'importExport.importHint': 'Import bookmarks from a JSON or HTML (Netscape) file. Supported formats include exports from Servas, Firefox, Chrome, and most other bookmark managers.',
+  'importExport.guestImportHint': 'As a guest, imported bookmarks will be public.',
   'importExport.importing': 'Importing...',
   'importExport.chooseFile': 'Choose File to Import',
   'importExport.close': 'Close',

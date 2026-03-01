@@ -117,6 +117,7 @@ const de = {
   'importExport.exportHtml': 'Als HTML exportieren',
   'importExport.importBookmarks': 'Lesezeichen importieren',
   'importExport.importHint': 'Importiere Lesezeichen aus einer JSON- oder HTML-Datei (Netscape). Unterstützt Exporte von Servas, Firefox, Chrome und den meisten anderen Lesezeichen-Managern.',
+  'importExport.guestImportHint': 'Als Gast werden importierte Lesezeichen öffentlich sein.',
   'importExport.importing': 'Importieren...',
   'importExport.chooseFile': 'Datei zum Importieren wählen',
   'importExport.close': 'Schließen',

@@ -117,6 +117,7 @@ const zh = {
   'importExport.exportHtml': '导出为 HTML',
   'importExport.importBookmarks': '导入书签',
   'importExport.importHint': '从 JSON 或 HTML（Netscape）文件导入书签。支持 Servas、Firefox、Chrome 及大多数书签管理器的导出格式。',
+  'importExport.guestImportHint': '作为访客，导入的书签将设为公开。',
   'importExport.importing': '导入中...',
   'importExport.chooseFile': '选择文件导入',
   'importExport.close': '关闭',

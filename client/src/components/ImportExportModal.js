@@ -115,7 +115,6 @@ export default function ImportExportModal({ onClose }) {
             </button>
           </div>
 
-          {!isGuest && (<>
           <h3 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: 12 }}>
             <Upload size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
             {t('importExport.importBookmarks')}
@@ -123,6 +122,11 @@ export default function ImportExportModal({ onClose }) {
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
             {t('importExport.importHint')}
           </p>
+          {isGuest && (
+            <p style={{ fontSize: '0.85rem', color: 'var(--accent)', marginBottom: 12 }}>
+              {t('importExport.guestImportHint')}
+            </p>
+          )}
           <input
             ref={fileInputRef}
             type="file"
@@ -138,7 +142,6 @@ export default function ImportExportModal({ onClose }) {
             <Upload size={16} />
             {importing ? t('importExport.importing') : t('importExport.chooseFile')}
           </button>
-          </>)}
         </div>
 
         <div className="modal-footer">

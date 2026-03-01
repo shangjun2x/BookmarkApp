@@ -117,6 +117,7 @@ const es = {
   'importExport.exportHtml': 'Exportar como HTML',
   'importExport.importBookmarks': 'Importar marcadores',
   'importExport.importHint': 'Importa marcadores desde un archivo JSON o HTML (Netscape). Compatible con exportaciones de Servas, Firefox, Chrome y la mayoría de gestores de marcadores.',
+  'importExport.guestImportHint': 'Como invitado, los marcadores importados serán públicos.',
   'importExport.importing': 'Importando...',
   'importExport.chooseFile': 'Elegir archivo para importar',
   'importExport.close': 'Cerrar',

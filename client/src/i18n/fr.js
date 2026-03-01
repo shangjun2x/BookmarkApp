@@ -117,6 +117,7 @@ const fr = {
   'importExport.exportHtml': 'Exporter en HTML',
   'importExport.importBookmarks': 'Importer des signets',
   'importExport.importHint': 'Importez des signets depuis un fichier JSON ou HTML (Netscape). Compatible avec les exports de Servas, Firefox, Chrome et la plupart des gestionnaires de signets.',
+  'importExport.guestImportHint': 'En tant qu\'invité, les signets importés seront publics.',
   'importExport.importing': 'Importation...',
   'importExport.chooseFile': 'Choisir un fichier à importer',
   'importExport.close': 'Fermer',

@@ -117,6 +117,7 @@ const ja = {
   'importExport.exportHtml': 'HTMLでエクスポート',
   'importExport.importBookmarks': 'ブックマークをインポート',
   'importExport.importHint': 'JSONまたはHTML（Netscape）ファイルからブックマークをインポートします。Servas、Firefox、Chrome、その他のブックマークマネージャーの形式に対応しています。',
+  'importExport.guestImportHint': 'ゲストとしてインポートされたブックマークは公開されます。',
   'importExport.importing': 'インポート中...',
   'importExport.chooseFile': 'ファイルを選択してインポート',
   'importExport.close': '閉じる',
